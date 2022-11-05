@@ -10,13 +10,15 @@ export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    SET_ERROR: "SET_ERROR"
 }
 
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false
+        loggedIn: false,
+        errorMsg: null
     });
     const history = useHistory();
 
@@ -30,25 +32,37 @@ function AuthContextProvider(props) {
             case AuthActionType.GET_LOGGED_IN: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: payload.loggedIn
+                    loggedIn: payload.loggedIn,
+                    errorMsg: null
                 });
             }
             case AuthActionType.LOGIN_USER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true
+                    loggedIn: true,
+                    errorMsg: null
                 })
             }
             case AuthActionType.LOGOUT_USER: {
                 return setAuth({
                     user: null,
-                    loggedIn: false
+                    loggedIn: false,
+                    errorMsg: null
+
                 })
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
                     user: payload.user,
-                    loggedIn: true
+                    loggedIn: true,
+                    errorMsg: null
+                })
+            }
+            case AuthActionType.SET_ERROR: {
+                return setAuth({
+                    user: null,
+                    loggedIn: false,
+                    errorMsg: payload
                 })
             }
             default:
@@ -70,6 +84,7 @@ function AuthContextProvider(props) {
     }
 
     auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
+        try{
         const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);      
         if (response.status === 200) {
             authReducer({
@@ -78,11 +93,22 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             })
-            history.push("/login");
+            history.push("/");
+
+        }
+        }catch(Error){
+            authReducer({
+                type: AuthActionType.SET_ERROR,
+                payload: "Registering Error has Occurred"
+            })
+            console.log("Registering Error");
+
         }
     }
 
     auth.loginUser = async function(email, password) {
+        try{
+
         const response = await api.loginUser(email, password);
         if (response.status === 200) {
             authReducer({
@@ -93,6 +119,19 @@ function AuthContextProvider(props) {
             })
             history.push("/");
         }
+      } catch(Error){
+        authReducer({
+            type: AuthActionType.SET_ERROR,
+            payload: "Login Error"
+        })
+     }
+    }
+
+    auth.SetBack = function() {
+        authReducer({
+            type: AuthActionType.SET_ERROR,
+            payload: null
+        })
     }
 
     auth.logoutUser = async function() {

@@ -3,13 +3,15 @@ import { React } from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { AuthContextProvider } from './auth';
 import { GlobalStoreContextProvider } from './store'
+//import here
 import {
     AppBanner,
     HomeWrapper,
     LoginScreen,
     RegisterScreen,
     Statusbar,
-    WorkspaceScreen
+    WorkspaceScreen,
+    MUIErrorModal
 } from './components'
 /*
     This is our application's top-level component.
@@ -21,6 +23,7 @@ import {
   inject our store into all the components in our application.
   
   @author McKilla Gorilla
+  #put after StatusBar
 */
 const App = () => {   
     return (
@@ -35,6 +38,7 @@ const App = () => {
                         <Route path="/playlist/:id" exact component={WorkspaceScreen} />
                     </Switch>
                     <Statusbar />
+                <MUIErrorModal />
                 </GlobalStoreContextProvider>
             </AuthContextProvider>
         </BrowserRouter>

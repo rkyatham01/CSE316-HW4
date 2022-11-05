@@ -17,7 +17,7 @@ function Statusbar() {
         text = store.currentList.name;
         
     return (
-        <div id="playlist-cards-statusbar">
+        <div id={store.currentList !== null ? "playlist-cards-statusbar" : ""}>
             <Typography variant="h4">{text}</Typography>
         </div>
     );
